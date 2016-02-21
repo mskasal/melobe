@@ -59,8 +59,6 @@ passport.use(new GitHubStrategy({
           user.profile.picture = user.profile.picture || profile._json.avatar_url;
           user.profile.location = user.profile.location || profile._json.location;
           user.profile.website = user.profile.website || profile._json.blog;
-          //user.repos = githubUser.userWatchlist({ kind: 'github', accessToken: accessToken });
-          console.log('1',githubUser.userWatchlist({ kind: 'github', accessToken: accessToken }))
           user.save(function(err) {
             console.log('info', { msg: 'GitHub account has been linked.' });
             done(err, user);
@@ -71,9 +69,6 @@ passport.use(new GitHubStrategy({
   } else {
     User.findOne({ github: profile.id }, function(err, existingUser) {
       if (existingUser) {
-        //uniqBy
-        //existingUser.repos = githubUser
-        console.log('1',githubUser.userWatchlist({ kind: 'github', accessToken: accessToken }))
         return done(null, existingUser);
       }
       User.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
@@ -89,7 +84,6 @@ passport.use(new GitHubStrategy({
           user.profile.picture = profile._json.avatar_url;
           user.profile.location = profile._json.location;
           user.profile.website = profile._json.blog;
-          console.log('2',githubUser.userWatchlist({ kind: 'github', accessToken: accessToken }))
           user.save(function(err) {
             done(err, user);
           });

@@ -125,7 +125,8 @@ app.get('/dashboard', passportConf.isAuthenticated, userController.dashboard);
 /**
  * API examples routes.
  */
-app.get('/api/github/watchlist', passportConf.isAuthenticated, apiController.userWatchlist);
+app.get('/api/settings', passportConf.isAuthenticated, apiController.getSettings);
+app.put('/api/settings', passportConf.isAuthenticated, apiController.updateSettings);
 
 /**
  * OAuth authentication routes. (Sign in)
