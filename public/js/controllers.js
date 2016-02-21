@@ -49,7 +49,6 @@
             $scope.options.onPublic = true;
           }, 10);
         }
-        console.log($scope.options.onPrivate, tabname, $scope.options.onPublic, tabname);
       });
     }, 300);
 
