@@ -16,19 +16,7 @@ var userSchema = new mongoose.Schema({
     website: { type: String, default: '' },
     picture: { type: String, default: '' }
   },
-  repos: [{
-      id: String,
-      name: String,
-      url: String,
-      type: String,
-      settings: {
-        merges: Boolean,
-        comments: Boolean,
-        pullRequestsClose: Boolean,
-        pullRequestsOpen: Boolean,
-        mentions: Boolean
-      }
-    }],
+  repos: Array,
   resetPasswordToken: String,
   resetPasswordExpires: Date
 });

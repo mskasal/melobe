@@ -12,7 +12,8 @@ var Github = require('octonode');
 
 exports.userWatchlist = function(tokenData) {
   var token = _.find(tokenData, { kind: 'github' });
-  var github = Github.client(token.accessToken);
+  console.log('token', JSON.stringify(tokenData),token)
+  var github = Github.client(tokenData.accessToken);
   var list = []
   var page = 1;
   var getPage = function(page, callback) {
@@ -31,7 +32,7 @@ exports.userWatchlist = function(tokenData) {
     });
   }
 
-  return getPage(page,function() {
+  getPage(page,function() {
     list = _.map(list,function(memo) {
       var newObj = {};
       var defaultSettings = {
@@ -48,7 +49,5 @@ exports.userWatchlist = function(tokenData) {
       newObj.settings = memo.settings || defaultSettings;
       return newObj;
     })
-
-      return list;
   })
 };

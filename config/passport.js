@@ -71,6 +71,9 @@ passport.use(new GitHubStrategy({
   } else {
     User.findOne({ github: profile.id }, function(err, existingUser) {
       if (existingUser) {
+        //uniqBy
+        //existingUser.repos = githubUser
+        console.log('1',githubUser.userWatchlist({ kind: 'github', accessToken: accessToken }))
         return done(null, existingUser);
       }
       User.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
@@ -103,14 +106,14 @@ exports.isAuthenticated = function(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/#/dashboard');
+  res.redirect('/login');
 };
 
 /**
  * Authorization Required middleware.
  */
 exports.isAuthorized = function(req, res, next) {
-  var provider = req.path.split('/').slice(-1)[0];
+  var provider = 'github';
 
   if (_.find(req.user.tokens, { kind: provider })) {
     next();
