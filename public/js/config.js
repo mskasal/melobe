@@ -10,8 +10,8 @@
   function routerBlock($stateProvider, $urlRouterProvider, $locationProvider) {
 
     $stateProvider
-      .state('home', {
-        url: '/home',
+      .state('login', {
+        url: '/login',
         templateUrl: 'views/home.html',
         controller: 'HomeCtrl'
       })
@@ -22,6 +22,6 @@
       });
 
     $locationProvider.html5Mode(true);
-    $urlRouterProvider.otherwise("/home");
+    $urlRouterProvider.otherwise("/login");
   }
 })();

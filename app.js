@@ -37,10 +37,8 @@ dotenv.load({
 /**
  * Controllers (route handlers).
  */
-var homeController = require('./controllers/home');
 var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
-var contactController = require('./controllers/contact');
 
 /**
  * API keys and Passport configuration.
@@ -120,28 +118,14 @@ app.use(express.static(path.join(__dirname, 'public'), {
 /**
  * Primary app routes.
  */
-app.get('/', homeController.index);
+app.get('/', userController.index);
 app.get('/login', userController.getLogin);
-app.post('/login', userController.postLogin);
-app.get('/logout', userController.logout);
-app.get('/forgot', userController.getForgot);
-app.post('/forgot', userController.postForgot);
-app.get('/reset/:token', userController.getReset);
-app.post('/reset/:token', userController.postReset);
-app.get('/signup', userController.getSignup);
-app.post('/signup', userController.postSignup);
-app.get('/account', passportConf.isAuthenticated, userController.getAccount);
-app.post('/account/profile', passportConf.isAuthenticated, userController.postUpdateProfile);
-app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
-app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
-app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
+app.get('/dashboard', passportConf.isAuthenticated, userController.dashboard);
 
 /**
  * API examples routes.
  */
-app.get('/api/github', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getGithub);
-app.get('/api/upload', apiController.getFileUpload);
-app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
+app.get('/api/github/watchlist', passportConf.isAuthenticated, apiController.userWatchlist);
 
 /**
  * OAuth authentication routes. (Sign in)
@@ -149,9 +133,9 @@ app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
 
 app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback', passport.authenticate('github', {
-  failureRedirect: '/#/home'
+  failureRedirect: '/'
 }), function(req, res) {
-  res.redirect(req.session.returnTo || '/#/dashboard');
+  res.redirect(req.session.returnTo || '/dashboard');
 });
 
 /**

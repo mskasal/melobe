@@ -1,12 +1,10 @@
 var _ = require('lodash');
 var passport = require('passport');
-var request = require('request');
 var LocalStrategy = require('passport-local').Strategy;
 var GitHubStrategy = require('passport-github').Strategy;
-var OAuthStrategy = require('passport-oauth').OAuthStrategy;
-var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 
 var User = require('../models/User');
+var githubUser = require('../controllers/api');
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
@@ -18,24 +16,6 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-/**
- * Sign in using Email and Password.
- */
-passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, password, done) {
-  email = email.toLowerCase();
-  User.findOne({ email: email }, function(err, user) {
-    if (!user) {
-      return done(null, false, { message: 'Email ' + email + ' not found'});
-    }
-    user.comparePassword(password, function(err, isMatch) {
-      if (isMatch) {
-        return done(null, user);
-      } else {
-        return done(null, false, { message: 'Invalid email or password.' });
-      }
-    });
-  });
-}));
 
 /**
  * OAuth Strategy Overview
@@ -60,12 +40,16 @@ passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_ID,
   clientSecret: process.env.GITHUB_SECRET,
   callbackURL: '/auth/github/callback',
-  passReqToCallback: true
+  passReqToCallback: true,
+  scope:'notifications,repo,user'
 }, function(req, accessToken, refreshToken, profile, done) {
   if (req.user) {
+    console.log('==+='+JSON.stringify(req.user))
     User.findOne({ github: profile.id }, function(err, existingUser) {
+      console.log('+++' + JSON.stringify(err))
+      console.log('==='+JSON.stringify(existingUser))
       if (existingUser) {
-        req.flash('errors', { msg: 'There is already a GitHub account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
+        console.log('errors', { msg: 'There is already a GitHub account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
         done(err);
       } else {
         User.findById(req.user.id, function(err, user) {
@@ -75,8 +59,10 @@ passport.use(new GitHubStrategy({
           user.profile.picture = user.profile.picture || profile._json.avatar_url;
           user.profile.location = user.profile.location || profile._json.location;
           user.profile.website = user.profile.website || profile._json.blog;
+          //user.repos = githubUser.userWatchlist({ kind: 'github', accessToken: accessToken });
+          console.log('1',githubUser.userWatchlist({ kind: 'github', accessToken: accessToken }))
           user.save(function(err) {
-            req.flash('info', { msg: 'GitHub account has been linked.' });
+            console.log('info', { msg: 'GitHub account has been linked.' });
             done(err, user);
           });
         });
@@ -89,7 +75,7 @@ passport.use(new GitHubStrategy({
       }
       User.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
         if (existingEmailUser) {
-          req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with GitHub manually from Account Settings.' });
+          console.log('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with GitHub manually from Account Settings.' });
           done(err);
         } else {
           var user = new User();
@@ -100,6 +86,7 @@ passport.use(new GitHubStrategy({
           user.profile.picture = profile._json.avatar_url;
           user.profile.location = profile._json.location;
           user.profile.website = profile._json.blog;
+          console.log('2',githubUser.userWatchlist({ kind: 'github', accessToken: accessToken }))
           user.save(function(err) {
             done(err, user);
           });
@@ -128,6 +115,6 @@ exports.isAuthorized = function(req, res, next) {
   if (_.find(req.user.tokens, { kind: provider })) {
     next();
   } else {
-    res.redirect('/auth/' + provider);
+    res.redirect('/auth/github');
   }
 };

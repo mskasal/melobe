@@ -60,7 +60,8 @@
     "twilio": "^3.3.0-edge",
     "twit": "^2.2.2",
     "validator": "^4.8.0",
-    "yui": "^3.18.1"
+    "yui": "^3.18.1",
+    "octonode": "^0.7.4"
   },
   "devDependencies": {
     "blessed": "^0.1.81",
