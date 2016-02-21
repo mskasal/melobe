@@ -1,9 +1,4 @@
-/**
- * Split into declaration and initialization for better startup performance.
- */
 var _ = require('lodash');
-var async = require('async');
-var querystring = require('querystring');
 var Github = require('octonode');
 var User = require('../models/User');
 
@@ -50,9 +45,8 @@ exports.getSettings = function(req, res, next) {
         var defaultSettings = {
           "merges": true,
           "comments": true,
-          "pullRequestsClose": true,
-          "pullRequestsOpen": true,
-          "mentions": true
+          "pullRequests": true,
+          "issues": true
         }
         var newObj = {};
         newObj.id = memo.id;

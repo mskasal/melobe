@@ -1,7 +1,3 @@
-var _ = require('lodash');
-var User = require('../models/User');
-
-
 exports.index = function(req, res) {
   return res.redirect('/login');
 };
@@ -14,10 +10,6 @@ exports.dashboard = function(req, res) {
   }
 };
 
-/**
- * GET /login
- * Login page.
- */
 exports.getLogin = function(req, res) {
   if (req.user) {
     return res.redirect('/dashboard');

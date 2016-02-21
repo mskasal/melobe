@@ -49,7 +49,6 @@ var passportConf = require('./config/passport');
  * Create Express server.
  */
 var app = express();
-console.log(process.env.asd)
   /**
    * Connect to MongoDB.
    */
