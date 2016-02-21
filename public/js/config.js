@@ -19,6 +19,13 @@
         url: '/dashboard',
         templateUrl: 'views/dashboard.html',
         controller: 'DashCtrl'
+      })
+      .state('auth', {
+        url: '/auth/github',
+        templateUrl: 'views/auth.html',
+        controller: function() {
+          window.location.pathname = '/auth/github';
+        }
       });
 
     $locationProvider.html5Mode(true);
