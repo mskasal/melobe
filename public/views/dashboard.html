@@ -3,8 +3,26 @@
 <section id="main">
   <section id="content">
     <div class="container">
-      <uib-tabset>
-        <uib-tab>
+      <div class="loader" ng-show="isLoading">
+        <div class="text-center m-t-50">
+          <i class="fa fa-spinner fa-spin fa-3x"></i>
+        </div>
+      </div>
+      <div class="error" ng-if="error">
+        <div class="text-center f-300 f-30">
+          {{error}}
+        </div>
+      </div>
+      <uib-tabset ng-show="!isLoading">
+        <div class="pull-right">
+          <button class="btn-success btn-sm btn pull-left" name="button" ng-click="save()" ng-disabled="saveButtonLoading" type="button">
+            <span ng-show="saveButtonLoading"><i class="fa fa-spinn fa-circle-o-notch"></i></span>
+            <span>Save Settings</span>
+          </button>
+          <button class="btn-warning btn-sm btn pull-left m-l-10" ng-if="options.onPrivate" name="button" ng-click="restoreDefaultPrivate()" type="button">Restore defaults for private repos</button>
+          <button class="btn-warning btn-sm btn pull-left m-l-10" ng-if="options.onPublic" name="button" ng-click="restoreDefaultPublic()" type="button">Restore defaults for public repos</button>
+        </div>
+        <uib-tab data-tab-name="private-tab">
           <uib-tab-heading>
             <i class="fa fa-lock c-yellow"></i>
             Private repos
@@ -12,11 +30,11 @@
           <div class="tab-content container">
             <table class="table m-t-30">
               <thead>
-                <tr>
+                <tr class="f-13">
                   <th>
-                    <input id="select-all" ng-click="toggleAll('private')" ng-model="options.isAllPrivateSelected" type="checkbox">
+                    <input class="select-all select-all-private" ng-click="toggleAll('private')" ng-model="options.isAllPrivateSelected" type="checkbox">
                   </th>
-                  <th>Repo name</th>
+                  <th class="min-w-350">Repo name</th>
                   <th>
                     <input class="toggle-all-options" ng-click="toggleAllOptions('pullRequestsOpen','private', $event)" ng-disabled="!options.showToggleOptionsX" type="checkbox">
                     Pull requests open</th>
@@ -37,30 +55,30 @@
               <tbody>
                 <tr ng-repeat="repoX in privateRepos">
                   <th scope="row">
-                    <input class="repoX-select" ng-attr-id="repoX-select-{{repoX.id}}" ng-attr-repo-id="{{repoX.id}}" ng-click="optionToggled('public', repoX)" ng-model="repoX.selected" type="checkbox">
+                    <input class="repo-select repoX-select" ng-attr-id="repoX-select-{{repoX.id}}" ng-attr-repo-id="{{repoX.id}}" ng-click="optionToggled('public', repoX)" ng-model="repoX.selected" type="checkbox">
                   </th>
-                  <td>
+                  <td class="f-13">
                     <label class="no-highlight cursor-pointer" for="repoX-select-{{repoX.id}}">{{repoX.name}}</label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="pullRequestsOpenX-{{repoX.id}}" ng-model="repoX.settings.pullRequestsOpen" type="checkbox">
-                    <label for="pullRequestsOpenX-{{repoX.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="pullRequestsOpenX-{{repoX.id}}"></label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="pullRequestsCloseX-{{repoX.id}}" ng-model="repoX.settings.pullRequestsClose" type="checkbox">
-                    <label for="pullRequestsCloseX-{{repoX.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="pullRequestsCloseX-{{repoX.id}}"></label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="mentionsX-{{repoX.id}}" ng-model="repoX.settings.mentions" type="checkbox">
-                    <label for="mentionsX-{{repoX.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="mentionsX-{{repoX.id}}"></label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="commentsX-{{repoX.id}}" ng-model="repoX.settings.comments" type="checkbox">
-                    <label for="commentsX-{{repoX.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="commentsX-{{repoX.id}}"></label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="mergesX-{{repoX.id}}" ng-model="repoX.settings.merges" type="checkbox">
-                    <label for="mergesX-{{repoX.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="mergesX-{{repoX.id}}"></label>
                   </td>
                 </tr>
               </tbody>
@@ -69,7 +87,7 @@
           </div>
         </uib-tab>
 
-        <uib-tab>
+        <uib-tab data-tab-name="public-tab">
           <uib-tab-heading>
             <i class="fa fa-book"></i>
             Public repos
@@ -77,60 +95,59 @@
           <div class="tab-content container">
             <table class="table m-t-30">
               <thead>
-                <tr>
+                <tr class="f-13">
                   <th>
-                    <input id="select-all" ng-click="toggleAll('public')" ng-model="options.isAllPublicSelected" type="checkbox">
+                    <input class="select-all select-all-public" ng-click="toggleAll('public')" ng-model="options.isAllPublicSelected" type="checkbox">
                   </th>
-                  <th>Repo name</th>
+                  <th class="min-w-350">Repo name</th>
                   <th>
-                    <input ng-click="toggleAllOptions('pullRequestsOpen','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
+                    <input class="toggle-all-options" ng-click="toggleAllOptions('pullRequestsOpen','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
                     Pull requests open</th>
                   <th>
-                    <input ng-click="toggleAllOptions('pullRequestsClose','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
+                    <input class="toggle-all-options" ng-click="toggleAllOptions('pullRequestsClose','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
                     Pull requests close</th>
                   <th>
-                    <input ng-click="toggleAllOptions('mentions','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
+                    <input class="toggle-all-options" ng-click="toggleAllOptions('mentions','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
                     Mentions</th>
                   <th>
-                    <input ng-click="toggleAllOptions('comments','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
+                    <input class="toggle-all-options" ng-click="toggleAllOptions('comments','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
                     Comments</th>
                   <th>
-                    <input ng-click="toggleAllOptions('merges','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
+                    <input class="toggle-all-options" ng-click="toggleAllOptions('merges','public', $event)" ng-disabled="!options.showToggleOptionsC" type="checkbox">
                     Merges</th>
                 </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="repoC in publicRepos">
                   <th scope="row">
-                    <input class="repoC-select" ng-attr-id="repoC-select-{{repoC.id}}" ng-attr-repo-id="{{repoC.id}}" ng-click="optionToggled('public', repoC)" ng-model="repoC.selected" type="checkbox">
+                    <input class="repo-select repoC-select" ng-attr-id="repoC-select-{{repoC.id}}" ng-attr-repo-id="{{repoC.id}}" ng-click="optionToggled('public', repoC)" ng-model="repoC.selected" type="checkbox">
                   </th>
-                  <td>
+                  <td class="f-13">
                     <label class="no-highlight cursor-pointer" for="repoC-select-{{repoC.id}}">{{repoC.name}}</label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="pullRequestsOpenC-{{repoC.id}}" ng-model="repoC.settings.pullRequestsOpen" type="checkbox">
-                    <label for="pullRequestsOpenC-{{repoC.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="pullRequestsOpenC-{{repoC.id}}"></label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="pullRequestsCloseC-{{repoC.id}}" ng-model="repoC.settings.pullRequestsClose" type="checkbox">
-                    <label for="pullRequestsCloseC-{{repoC.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="pullRequestsCloseC-{{repoC.id}}"></label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="mentionsC-{{repoC.id}}" ng-model="repoC.settings.mentions" type="checkbox">
-                    <label for="mentionsC-{{repoC.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="mentionsC-{{repoC.id}}"></label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="commentsC-{{repoC.id}}" ng-model="repoC.settings.comments" type="checkbox">
-                    <label for="commentsC-{{repoC.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="commentsC-{{repoC.id}}"></label>
                   </td>
                   <td>
                     <input class="not-seen option-checkbox" id="mergesC-{{repoC.id}}" ng-model="repoC.settings.merges" type="checkbox">
-                    <label for="mergesC-{{repoC.id}}" class="cursor-pointer no-highlight"></label>
+                    <label class="cursor-pointer no-highlight" for="mergesC-{{repoC.id}}"></label>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <button class="btn-success btn-sm btn pull-left" name="button" ng-click="save()" type="button">Save</button>
           </div>
         </uib-tab>
       </uib-tabset>

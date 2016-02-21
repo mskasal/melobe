@@ -304,6 +304,7 @@
 .f-50 {
   font-size: 50px;
 }
+
 /*
  * Position Classes
  */
@@ -525,7 +526,7 @@
 .cursor-pointer {
   cursor: pointer;
 }
-.not-seen{
+.not-seen {
   /*opacity: 0;*/
 }
 .no-highlight {
@@ -545,14 +546,50 @@
 .text-center {
   text-align: center;
 }
-input[type=checkbox].option-checkbox { display:none; } /* to hide the checkbox itself */
+.min-w-350 {
+  min-width: 350px;
+}
+input[type=checkbox].option-checkbox {
+  display: none;
+}
+
+/* to hide the checkbox itself */
+
 input[type=checkbox].option-checkbox + label:before {
   font-family: FontAwesome;
   display: inline-block;
+  font-size: 0.8em;
+}
+input[type=checkbox].option-checkbox + label:before {
+  content: "\f1f6";
+  color: #f44336;
+  font-size: 0.8em;
 }
 
-input[type=checkbox].option-checkbox + label:before { content: "\f1f6"; color: #f44336;} /* unchecked icon */
-input[type=checkbox].option-checkbox + label:before { letter-spacing: 10px; } /* space between checkbox and label */
+/* unchecked icon */
 
-input[type=checkbox].option-checkbox:checked + label:before { content: "\f0f3"; color: #4caf50;} /* checked icon */
-input[type=checkbox].option-checkbox:checked + label:before { letter-spacing: 5px; } /* allow space for check mark */
+input[type=checkbox].option-checkbox + label:before {
+  letter-spacing: 10px;
+  font-size: 0.8em;
+}
+
+/* space between checkbox and label */
+
+input[type=checkbox].option-checkbox:checked + label:before {
+  content: "\f0f3";
+  color: #4caf50;
+  font-size: 0.8em;
+}
+
+/* checked icon */
+
+input[type=checkbox].option-checkbox:checked + label:before {
+  letter-spacing: 5px;
+  font-size: 0.8em;
+}
+
+/* allow space for check mark */
+
+.profile-pic {
+  width: 30px;
+}
