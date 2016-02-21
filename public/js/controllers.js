@@ -16,6 +16,7 @@
 
   function DashCtrl($scope, SettingsService) {
     var vm = this;
+    $scope.profile = {};
 
     $scope.options = {
       isAllPublicSelected: false,
@@ -115,7 +116,7 @@
 
     $scope.toggleAll = function(type) {
       var toggleStatus;
-
+      angular.element('.toggle-all-options').prop('checked', false);
       if (type === 'public') {
         toggleStatus = $scope.options.isAllPublicSelected;
         angular.forEach($scope.publicRepos, function(itm, index) {
