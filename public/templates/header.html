@@ -1,14 +1,17 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">
-        <img alt="Brand" src="img/brand.png">
+      <a class="navbar-brand brd-2" href="#">
+        <img class="brd-2" alt="Brand" src="img/brand.png">
       </a>
     </div>
     <ul class="nav navbar-nav navbar-right m-t-10 m-r-20" ng-if="profile.name">
       <li>
-        <img ng-src="{{profile.picture}}" class="profile-pic" alt="Profile pic" />
-        <span>{{profile.name}}</span>
+        <img ng-src="{{profile.picture}}" class="profile-pic brd-2" alt="Profile pic" />
+        <span>
+          <strong>{{profile.name}}</strong>
+          <!-- <small>{{profile.email}}</small> -->
+        </span>
       </li>
     </ul>
   </div>

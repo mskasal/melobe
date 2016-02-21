@@ -1,11 +1,14 @@
 <header id="header" ng-include="'templates/header.html'"></header>
 
 <section id="main">
+  <div class="status-messages text-center">
+    <uib-alert ng-if="alert.msg" type="{{alert.type}}" close="closeAlert()">{{alert.msg}}</uib-alert>
+  </div>
   <section id="content">
     <div class="container">
       <div class="loader" ng-show="isLoading">
         <div class="text-center m-t-50">
-          <i class="fa fa-spinner fa-spin fa-3x"></i>
+          <i class="fa fa-cog fa-spin fa-3x"></i>
         </div>
       </div>
       <div class="error" ng-if="error">
@@ -16,7 +19,7 @@
       <uib-tabset ng-show="!isLoading">
         <div class="pull-right">
           <button class="btn-success btn-sm btn pull-left" name="button" ng-click="save()" ng-disabled="saveButtonLoading" type="button">
-            <span ng-show="saveButtonLoading"><i class="fa fa-spinn fa-circle-o-notch"></i></span>
+            <span ng-show="saveButtonLoading"><i class="fa fa-spin fa-circle-o-notch"></i></span>
             <span>Save Settings</span>
           </button>
           <button class="btn-warning btn-sm btn pull-left m-l-10" ng-if="options.onPrivate" name="button" ng-click="restoreDefaultPrivate()" type="button">Restore defaults for private repos</button>
@@ -53,7 +56,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="repoX in privateRepos">
+                <tr ng-repeat="repoX in privateRepos | orderBy:'name'">
                   <th scope="row">
                     <input class="repo-select repoX-select" ng-attr-id="repoX-select-{{repoX.id}}" ng-attr-repo-id="{{repoX.id}}" ng-click="optionToggled('public', repoX)" ng-model="repoX.selected" type="checkbox">
                   </th>
@@ -83,7 +86,6 @@
                 </tr>
               </tbody>
             </table>
-            <button class="btn-success btn-sm btn pull-left" name="button" ng-click="save()" type="button">Save</button>
           </div>
         </uib-tab>
 
@@ -118,7 +120,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="repoC in publicRepos">
+                <tr ng-repeat="repoC in publicRepos | orderBy:'name'">
                   <th scope="row">
                     <input class="repo-select repoC-select" ng-attr-id="repoC-select-{{repoC.id}}" ng-attr-repo-id="{{repoC.id}}" ng-click="optionToggled('public', repoC)" ng-model="repoC.selected" type="checkbox">
                   </th>

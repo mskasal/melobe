@@ -19,7 +19,7 @@
     $scope.profile = {};
     $scope.isLoading = true;
     $scope.saveButtonLoading = false;
-
+    $scope.alert = {};
     $scope.options = {
       isAllPublicSelected: false,
       isAllPrivateSelected: false,
@@ -193,24 +193,49 @@
         });
     };
 
+    $scope.alerts = {
+      fail: {
+        type: 'danger',
+        msg: 'Oh snap!'
+      },
+      success: {
+        type: 'success',
+        msg: 'Well done!'
+      }
+    };
+
+    $scope.closeAlert = function() {
+      $scope.alert = {};
+    };
+
     function saveSuccess() {
+      $scope.publicRepos.forEach(function(e, i) {
+        e.selected = false;
+      });
+      $scope.privateRepos.forEach(function(e, i) {
+        e.selected = false;
+      });
+
+      angular.element('.toggle-all-options').prop('checked', false);
+      angular.element('.select-all').prop('checked', false);
+
+      $scope.alert = $scope.alerts.success;
       $scope.privateReposDefault = [];
       $scope.publicReposDefault = [];
       angular.copy($scope.privateRepos, $scope.privateReposDefault);
       angular.copy($scope.publicRepos, $scope.publicReposDefault);
+
       $timeout(function() {
         $scope.saveButtonLoading = false;
-        angular.element('.toggle-all-options').prop('checked', false);
-        angular.element('.select-all').prop('checked', false);
-        angular.element('.repo-select').prop('checked', false);
+        // angular.element('.repo-select').prop('checked', false);
       }, 800);
     }
 
     function saveError() {
+      $scope.alert = $scope.alerts.fail;
       $timeout(function() {
         $scope.saveButtonLoading = false;
       }, 800);
-      alert('fail');
     }
 
     $scope.getRepos();
