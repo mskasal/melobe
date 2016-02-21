@@ -1,2 +1,22 @@
-home
-<a ui-sref="auth" ui-sref-opts="{reload: true}">Login</a>
+<header id="header" ng-include="'templates/header.html'"></header>
+
+<section id="main">
+  <section id="content">
+    <div class="container">
+      <div class="text-center f-30 m-t-50 f-300">
+        <h4>What is it?</h4>
+        Melobe is a service which is let you set your github notifications more accurate!
+      </div>
+      <div class="text-center f-30 m-t-30 f-300">
+        <h4>How is it works?</h4>
+        Melobe service will check your Github notifications and mark as read that according to your settings.
+      </div>
+      <div class="text-center m-t-30">
+        <a class="btn btn-success" ui-sref-opts="{reload: true}" ui-sref="auth">
+          <i class="fa fa-github fa-lg"></i>
+          Login with Github
+        </a>
+      </div>
+    </div>
+  </section>
+</section>
