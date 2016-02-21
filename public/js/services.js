@@ -10,7 +10,7 @@
   function SettingsService($q, $http) {
     var get = function() {
       return $q(function(resolve, reject) {
-        $http.get(HOST_URLS.api + '/settings')
+        $http.get('/api/settings')
           .success(function(data, status, headers, config) {
             resolve(data);
           })
@@ -22,7 +22,11 @@
 
     var post = function(settingsData) {
       return $q(function(resolve, reject) {
-        $http.put(HOST_URLS.api + '/settings', settingsData)
+        $http.put('/api/settings', settingsData, {
+            headers: {
+              'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+            }
+          })
           .success(function(data, status, headers, config) {
             resolve(data);
           })
@@ -31,7 +35,7 @@
           });
       });
     };
-
+    
     return {
       get: get,
       post: post

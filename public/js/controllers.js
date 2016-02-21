@@ -12,107 +12,69 @@
     var vm = this;
   }
 
-  DashCtrl.$inject = ['$scope', 'SettingsService'];
+  DashCtrl.$inject = ['$scope', 'SettingsService', '$timeout'];
 
-  function DashCtrl($scope, SettingsService) {
+  function DashCtrl($scope, SettingsService, $timeout) {
     var vm = this;
     $scope.profile = {};
+    $scope.isLoading = true;
+    $scope.saveButtonLoading = false;
 
     $scope.options = {
       isAllPublicSelected: false,
       isAllPrivateSelected: false,
       showToggleOptionsC: false,
-      showToggleOptionsX: false
+      showToggleOptionsX: false,
+      onPrivate: true,
+      onPublic: false
     };
 
     $scope.privateRepos = [];
+    $scope.privateReposDefault = [];
+
     $scope.publicRepos = [];
+    $scope.publicReposDefault = [];
+
+    $timeout(function() {
+      $('li.uib-tab').click(function() {
+        var tabname = $(this).attr('data-tab-name');
+        if (tabname === 'private-tab') {
+          $timeout(function() {
+            $scope.options.onPrivate = true;
+            $scope.options.onPublic = false;
+          }, 10);
+        } else if (tabname === 'public-tab') {
+          $timeout(function() {
+            $scope.options.onPrivate = false;
+            $scope.options.onPublic = true;
+          }, 10);
+        }
+        console.log($scope.options.onPrivate, tabname, $scope.options.onPublic, tabname);
+      });
+    }, 300);
 
     $scope.getRepos = function() {
       SettingsService.get().then(function(response) {
         $scope.repos = response.repos;
+        $scope.profile = response.user;
         response.repos.forEach(function(e, i) {
-          console.log(e, i);
+          e.selected = false;
+          if (e.type === 'private') {
+            $scope.privateRepos.push(e);
+          } else {
+            $scope.publicRepos.push(e);
+          }
+          if (i === (response.repos.length - 1)) {
+            $scope.isLoading = false;
+            angular.copy($scope.privateRepos, $scope.privateReposDefault);
+            angular.copy($scope.publicRepos, $scope.publicReposDefault);
+          }
         });
       }, function(err) {
-        console.log(err);
+        $scope.isLoading = false;
+        $scope.error = err;
       });
     };
-
-    $scope.repos = [{
-      "name": "1 name",
-      "id": "1",
-      "url": "google.com",
-      "type": "private",
-      "settings": {
-        "merges": true,
-        "comments": true,
-        "pullRequestsClose": true,
-        "pullRequestsOpen": true,
-        "mentions": true
-      },
-      "selected": false
-    }, {
-      "name": "2 name",
-      "id": "2",
-      "url": "google.com",
-      "type": "public",
-      "settings": {
-        "merges": true,
-        "comments": true,
-        "pullRequestsClose": true,
-        "pullRequestsOpen": true,
-        "mentions": true
-      },
-      "selected": false
-    }, {
-      "name": "3 name",
-      "id": "3",
-      "url": "google.com",
-      "type": "public",
-      "settings": {
-        "merges": true,
-        "comments": true,
-        "pullRequestsClose": true,
-        "pullRequestsOpen": true,
-        "mentions": true
-      },
-      "selected": false
-    }, {
-      "name": "4 name",
-      "id": "4",
-      "url": "google.com",
-      "type": "private",
-      "settings": {
-        "merges": true,
-        "comments": true,
-        "pullRequestsClose": true,
-        "pullRequestsOpen": true,
-        "mentions": true
-      },
-      "selected": false
-    }, {
-      "name": "5 name",
-      "id": "5",
-      "url": "google.com",
-      "type": "private",
-      "settings": {
-        "merges": true,
-        "comments": true,
-        "pullRequestsClose": true,
-        "pullRequestsOpen": true,
-        "mentions": true
-      },
-      "selected": false
-    }];
-
-    $scope.repos.forEach(function(e, i) {
-      if (e.type === 'private') {
-        $scope.privateRepos.push(e);
-      } else {
-        $scope.publicRepos.push(e);
-      }
-    });
 
     $scope.toggleAll = function(type) {
       var toggleStatus;
@@ -202,11 +164,55 @@
           }
         }
       }
-
     }
 
-    $scope.save = function() {
-      console.log($scope.repos);
+    $scope.restoreDefaultPublic = function() {
+      $scope.publicRepos = [];
+      angular.copy($scope.publicReposDefault, $scope.publicRepos);
+      angular.element('.select-all-public').prop('checked', false);
     };
+
+    $scope.restoreDefaultPrivate = function() {
+      $scope.privateRepos = [];
+      angular.copy($scope.privateReposDefault, $scope.privateRepos);
+      angular.element('.select-all-private').prop('checked', false);
+    };
+
+    $scope.save = function() {
+      $scope.saveButtonLoading = true;
+
+      var repos = $scope.privateRepos.concat($scope.publicRepos);
+      var settingsData = {
+        repos: repos
+      };
+      SettingsService.post(settingsData)
+        .then(function() {
+          saveSuccess();
+        }, function(err) {
+          saveError();
+        });
+    };
+
+    function saveSuccess() {
+      $scope.privateReposDefault = [];
+      $scope.publicReposDefault = [];
+      angular.copy($scope.privateRepos, $scope.privateReposDefault);
+      angular.copy($scope.publicRepos, $scope.publicReposDefault);
+      $timeout(function() {
+        $scope.saveButtonLoading = false;
+        angular.element('.toggle-all-options').prop('checked', false);
+        angular.element('.select-all').prop('checked', false);
+        angular.element('.repo-select').prop('checked', false);
+      }, 800);
+    }
+
+    function saveError() {
+      $timeout(function() {
+        $scope.saveButtonLoading = false;
+      }, 800);
+      alert('fail');
+    }
+
+    $scope.getRepos();
   }
 })();
